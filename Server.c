@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
   struct hostent *hostptr;
   
   memset(&msg_get,0,sizeof(msg_get));
-  socket_fd = socket (AF_INET, SOCK_DGRAM, 0);
+  socket_fd = socket (AF_INET, SOCK_DGRAM, 0); // SOCK_DGRAM- UDP . 0 means use default protocol for the address family.
   
 
   memset((char *) &dest,0, sizeof(dest)); 
@@ -34,19 +34,23 @@ int main(int argc, char *argv[])
   s_in.sin_family = (short)AF_INET;
   s_in.sin_addr.s_addr = htonl(INADDR_ANY);   
   s_in.sin_port = htons((u_short)0x3311);
-  bind(socket_fd, (struct sockaddr *)&s_in, sizeof(s_in));
+  bind(socket_fd, (struct sockaddr *)&s_in, sizeof(s_in)); // socketfd – File descriptor of socket to be binded
   
 
  
 while(strcmp(msg_snd,"exit")!=0){
   
   if(check){
-    sendto(socket_fd,msg_snd,sizeof(msg_snd),0,(struct sockaddr *)&dest,sizeof(dest));
+	   // socket_fd – File descriptor of socket. msg_snd – Application buffer containing the data to be sent.
+    sendto(socket_fd,msg_snd,sizeof(msg_snd),0,(struct sockaddr *)&dest,sizeof(dest));   
+	  
+
     check= false;
   }
   else
   {
 	  socklen_t  size = sizeof(from);
+	  //  msg_get – Application buffer in which to receive data
 	  cc = recvfrom(socket_fd,&msg_get,sizeof(msg_get),0,(struct sockaddr *)&from,&size);
 	  msg_get[cc] = '\0';
           if(strcmp(msg_get,"dontwrite")!= 0)printf("\nThe messege you got is: %s ",msg_get);
